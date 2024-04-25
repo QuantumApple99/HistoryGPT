@@ -15,7 +15,7 @@ def process_data():
     data = request.get_json()
     prompt = data['prompt']
 
-    os.environ['OPENAI_API_KEY'] = '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'
+    os.environ['OPENAI_API_KEY'] = ''
 
     client = OpenAI()
 
