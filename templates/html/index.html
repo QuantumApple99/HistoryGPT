@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
+	<link rel="stylesheet" href="/static/css/style.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+	<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+	<link rel="stylesheet"
+		href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css">
+	<script>
+		const user_image = `<img src="/img/user.png" alt="User Avatar">`;
+		const gpt_image = `<img src="/img/gpt.png" alt="GPT Avatar">`;
+	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="/static/js/script.js"></script>
+	<style>
+		.hljs {
+			color: #e9e9f4;
+			background: #28293629;
+			border-radius: var(--border-radius-1);
+			border: 1px solid var(--blur-border);
+			font-size: 15px;
+		}
+
+		#message-input {
+			margin-right: 30px;
+			height: 80px;
+		}
+
+		#message-input::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		#message-input::-webkit-scrollbar-track {
+			background: #f1f1f1;
+		}
+
+		/* Handle */
+		#message-input::-webkit-scrollbar-thumb {
+			background: #c7a2ff;
+		}
+
+		/* Handle on hover */
+		#message-input::-webkit-scrollbar-thumb:hover {
+			background: #8b3dff;
+		}
+	</style>
+	<title>HistoryGPT</title>
+</head>
+
+<body>
+	<div class="gradient"></div>
+	<div class="row">
+		<div class="box conversations">
+			<div class="top">
+				<div style="font-size:36px;">
+					<b>HistoryGPT</b>
+				</div>
+			</div>
+			<div class="bottom_buttons">
+				HistoryGPT excels at generating linguistically accurate historical text from the past 500 years.
+			</div>
+			<div class="bottom_buttons">
+				<button style="margin-top:440px; text-align:center;" class="submit-button" onclick="process()">
+					<i class="fa-regular fa-trash"></i>
+					<div style="margin-left:25px;">
+						<span>Submit Prompt</span>
+					</div>
+				</button>
+			</div>
+		</div>
+		<div class="conversation disable-scrollbars">
+			<div class="box" id="messages">
+			</div>
+			<div class="user-input">
+				<div class="box input-box">
+					<textarea id="message-input" placeholder="Write a prompt..." cols="30" rows="10"
+						style="white-space: pre-wrap;"></textarea>
+					<div id="send-button">
+						<i class="fa-regular fa-paper-plane-top"></i>
+					</div>
+				</div>
+			</div>
+			<div class="buttons">
+				<div class="field">
+					<input type="checkbox" id="switch" />
+					<label for="switch"></label>
+					<span class="about">Web Access</span>
+				</div>
+
+				<form class="color-picker" action="">
+					<fieldset>
+						<legend class="visually-hidden">Pick a color scheme</legend>
+						<label for="light" class="visually-hidden">Light</label>
+						<input type="radio" title="light" name="theme" id="light" checked>
+
+						<label for="pink" class="visually-hidden">Pink theme</label>
+						<input type="radio" title="pink" id="pink" name="theme">
+
+						<label for="blue" class="visually-hidden">Blue theme</label>
+						<input type="radio" title="blue" id="blue" name="theme">
+
+						<label for="green" class="visually-hidden">Green theme</label>
+						<input type="radio" title="green" id="green" name="theme">
+
+						<label for="dark" class="visually-hidden">Dark theme</label>
+						<input type="radio" title="dark" id="dark" name="theme">
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="mobile-sidebar">
+		<i class="fa-solid fa-bars"></i>
+	</div>
+</body>
+
+</html>
