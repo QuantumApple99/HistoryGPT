@@ -6,27 +6,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
 	<link rel="stylesheet" href="/static/css/style.css">
-	<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-	<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
-	<link rel="stylesheet"
-		href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css">
-	<script>
-		const user_image = `<img src="/img/user.png" alt="User Avatar">`;
-		const gpt_image = `<img src="/img/gpt.png" alt="GPT Avatar">`;
-	</script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="/static/js/script.js"></script>
+	<link rel="icon" href="/static/img/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16x16.png">
+	<script src="/static/js/script.js" defer></script>
 	<style>
-		.hljs {
-			color: #e9e9f4;
-			background: #28293629;
-			border-radius: var(--border-radius-1);
-			border: 1px solid var(--blur-border);
-			font-size: 15px;
-		}
-
 		#message-input {
 			margin-right: 30px;
 			height: 80px;
@@ -67,33 +52,22 @@
 				HistoryGPT excels at generating linguistically accurate historical text from the past 500 years.
 			</div>
 			<div class="bottom_buttons">
-				<button style="margin-top:440px; text-align:center;" class="submit-button" onclick="process()">
-					<i class="fa-regular fa-trash"></i>
-					<div style="margin-left:25px;">
-						<span>Submit Prompt</span>
-					</div>
+				<button style="margin-top:440px; text-align:center;" class="submit-button" id="clear-button" type="button">
+					<span>New conversation</span>
 				</button>
 			</div>
 		</div>
 		<div class="conversation disable-scrollbars">
-			<div class="box" id="messages">
+			<div class="box" id="messages" aria-live="polite">
 			</div>
 			<div class="user-input">
 				<div class="box input-box">
-					<textarea id="message-input" placeholder="Write a prompt..." cols="30" rows="10"
+					<textarea id="message-input" placeholder="Write a prompt… (Enter to send, Shift+Enter for a new line)" cols="30" rows="10"
 						style="white-space: pre-wrap;"></textarea>
-					<div id="send-button">
-						<i class="fa-regular fa-paper-plane-top"></i>
-					</div>
+					<button id="send-button" class="submit-button" type="button" aria-label="Send">Send</button>
 				</div>
 			</div>
 			<div class="buttons">
-				<div class="field">
-					<input type="checkbox" id="switch" />
-					<label for="switch"></label>
-					<span class="about">Web Access</span>
-				</div>
-
 				<form class="color-picker" action="">
 					<fieldset>
 						<legend class="visually-hidden">Pick a color scheme</legend>
@@ -116,9 +90,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mobile-sidebar">
-		<i class="fa-solid fa-bars"></i>
-	</div>
+	<button class="mobile-sidebar" id="sidebar-toggle" type="button" aria-label="Menu">☰</button>
 </body>
 
 </html>
