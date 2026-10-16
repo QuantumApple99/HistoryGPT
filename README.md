@@ -25,7 +25,10 @@ Run the tests with `pytest`.
 app.py                 Flask app: GET / (chat page), POST /api/chat
 historygpt/llm.py      The only module that calls a model (swap point for the LoRA model)
 templates/, static/    Chat front end
-tests/                 API tests (no network; the model is stubbed)
+historygpt/data/       Dataset v2: corpus readers, passage cutting, era/genre labels, splits
+scripts/               download_corpora.py (fetch sources into data/raw/), build_dataset.py
+tests/                 API and data tests (no network; the model is stubbed)
+data/v2/               Dataset v2 passages (passages.jsonl) and their statistics (STATS.md)
 data/legacy/           v1 dataset: raw passages, train/validation JSONL, training metrics
 notebooks/legacy/      v1 notebooks: data conversion, format checks, fine-tuning, comparison
 ```
@@ -58,6 +61,29 @@ Known problems, which v2 is designed to fix:
   consecutive lines of Othello).
 - **No evaluation** beyond the fine-tuning loss, which is too noisy at this
   size to show whether period style was learned.
+
+## Dataset v2
+
+```bash
+pip install -r requirements-data.txt
+python scripts/download_corpora.py      # ~5.5 GB into data/raw/
+python scripts/build_dataset.py         # data/v2/passages.jsonl + STATS.md
+```
+
+Passages of 120–350 words, balanced across eight 50-year eras (1500–1899), from
+EEBO-TCP and ECCO-TCP (books, CC0), CLMET 3.1 (CC BY-NC-SA), Old Bailey
+Proceedings (CC BY-NC) and Hansard (Open Parliament Licence). Each passage
+records its year, era, genre, source, work, author and licence.
+
+- **Splits by author.** Every work by one author (or, for anonymous works, one
+  work; for trials, one court session) is in a single split.
+- **No translations.** A work is dropped if its title marks it as translated, or
+  if its author is foreign: most of their catalogued works are marked as
+  translated (Calvin, Bullinger, Ovid, Plutarch…), or they are on a short
+  hand-made list. A few translations whose titles and authors give no sign
+  remain; a sample of title pages suggests under 1%.
+- **No late reprints.** Books printed more than 30 years after the author's
+  death (e.g. Chaucer in 1602) are dropped.
 
 ## Roadmap
 

@@ -14,3 +14,6 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# Downloaded corpora (re-create with scripts/download_corpora.py)
+data/raw/
