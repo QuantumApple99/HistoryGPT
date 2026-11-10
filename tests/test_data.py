@@ -164,3 +164,47 @@ def test_untag_old_bailey_spacing():
 def test_death_year(author, year):
     sources = pytest.importorskip("historygpt.data.sources")
     assert sources._death_year(author) == year
+
+
+# --- prompts -----------------------------------------------------------------
+
+from historygpt.data.prompts import chat_example, era_phrases  # noqa: E402
+from historygpt.llm import SYSTEM_PROMPT  # noqa: E402
+
+PASSAGE = {"id": "hgpt2-00001", "text": paragraph(6), "year": 1583, "bucket": "1550-1599", "genre": "sermon", "source": "tcp"}
+
+
+@pytest.mark.parametrize(
+    "year, phrases",
+    [
+        (1583, ["the 1580s", "the late 16th century", "around 1583"]),
+        (1600, ["the 1600s", "the early 17th century", "around 1600"]),
+        (1850, ["the 1850s", "the mid 19th century", "around 1850"]),
+    ],
+)
+def test_era_phrases(year, phrases):
+    assert era_phrases(year) == phrases
+
+
+def test_chat_example_with_label():
+    label = {"topic": "patience in affliction", "form": "a sermon"}
+    example = chat_example(PASSAGE, label, seed=670)
+    system, user, assistant = example["messages"]
+    assert system == {"role": "system", "content": SYSTEM_PROMPT}
+    assert "patience in affliction" in user["content"] and "a sermon" in user["content"]
+    assert any(p in user["content"] for p in era_phrases(1583))
+    assert user["content"][0].isupper()
+    assert assistant["content"] == PASSAGE["text"]
+    assert example["labelled"]
+
+
+def test_chat_example_without_label_uses_genre():
+    example = chat_example(PASSAGE, None, seed=670)
+    assert "a sermon" in example["messages"][1]["content"] and not example["labelled"]
+
+
+def test_chat_example_is_deterministic_and_varies_across_passages():
+    label = {"topic": "patience", "form": "a sermon"}
+    assert chat_example(PASSAGE, label, 670) == chat_example(PASSAGE, label, 670)
+    prompts = {chat_example({**PASSAGE, "id": f"p{i}"}, label, 670)["messages"][1]["content"] for i in range(50)}
+    assert len(prompts) > 10

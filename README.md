@@ -6,7 +6,10 @@ A language model that writes in the style of English from a chosen period
 > **Status: being rebuilt.** The first version fine-tuned GPT-3.5 on 82
 > hand-picked passages. The next version moves to a LoRA fine-tune of an
 > open-weight model, a larger period-balanced corpus, and a real evaluation.
-> See [Roadmap](#roadmap).
+> See [Roadmap](#roadmap); progress and decisions are logged in
+> [TRACKER.md](TRACKER.md).
+>
+> The web app still serves the v1 model until the new one is trained.
 
 ## Quick start
 
@@ -25,9 +28,11 @@ Run the tests with `pytest`.
 app.py                 Flask app: GET / (chat page), POST /api/chat
 historygpt/llm.py      The only module that calls a model (swap point for the LoRA model)
 templates/, static/    Chat front end
-historygpt/data/       Dataset v2: corpus readers, passage cutting, era/genre labels, splits
-scripts/               download_corpora.py (fetch sources into data/raw/), build_dataset.py
-tests/                 API and data tests (no network; the model is stubbed)
+historygpt/data/       Dataset v2: corpus readers, passage cutting, era/genre labels, splits,
+                       chat-example prompts
+scripts/               download_corpora.py (fetch sources into data/raw/), build_dataset.py,
+                       generate_prompts.py (label passages, write chat examples)
+tests/                 API and data tests (no network; models are stubbed)
 data/v2/               Dataset v2 passages (passages.jsonl) and their statistics (STATS.md)
 data/legacy/           v1 dataset: raw passages, train/validation JSONL, training metrics
 notebooks/legacy/      v1 notebooks: data conversion, format checks, fine-tuning, comparison
@@ -85,13 +90,37 @@ records its year, era, genre, source, work, author and licence.
 - **No late reprints.** Books printed more than 30 years after the author's
   death (e.g. Chaucer in 1602) are dropped.
 
+See [data/v2/STATS.md](data/v2/STATS.md) for counts by era, source, split,
+genre and length.
+
+### Instructions (in progress)
+
+Each passage becomes a chat example: a user request that names the passage's
+form, topic and period (e.g. "Write a sermon about patience in affliction, as
+if written in the 1580s."), with the passage as the reply. Claude Haiku labels
+each passage with a `topic` and a `form` (finer than the title-based genre)
+and flags likely translations. Templates and the way the period is named
+("the 1580s", "the late 16th century", "around 1583") vary per passage, and
+the choice is seeded, so builds are reproducible. Passages without a usable
+label get a genre-only request.
+
+```bash
+# needs ANTHROPIC_API_KEY in .env
+python scripts/generate_prompts.py sample 15   # label 15 passages and print them for review
+python scripts/generate_prompts.py submit      # label the rest via the Message Batches API
+python scripts/generate_prompts.py collect     # wait for the batch; labels cached in data/v2/labels.jsonl
+python scripts/generate_prompts.py build       # data/v2/chat/{train,val,test}.jsonl
+```
+
+The code and tests are in place; the labelling run has not been done yet.
+
 ## Roadmap
 
 1. **Cleanup** ✅ secrets out of code, repo layout, web app fixes, tests.
 2. **Dataset v2** — period-balanced corpus of texts originally written in
-   English (e.g. EEBO-TCP, ECCO-TCP, Project Gutenberg, Old Bailey
-   Proceedings) with verified dates; generated instructions; splits by work
-   and author.
+   English (EEBO-TCP, ECCO-TCP, CLMET, Old Bailey Proceedings, Hansard) with
+   verified dates and splits by author ✅; generated instructions (in
+   progress).
 3. **Evaluation** — era classifier, anachronism rate, prompt adherence, blind
    human comparison; prompting and retrieval baselines.
 4. **Model** — LoRA fine-tune of an open-weight model, compared against the
